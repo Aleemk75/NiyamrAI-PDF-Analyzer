@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NiyamrAI - Document Compliance Checker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f5f7;
+            min-height: 100vh;
+            color: #1d1d1f;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            border-bottom: 1px solid #e5e5e7;
+            padding: 16px 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #6e6e73;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #1d1d1f;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .lang-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .login-btn {
+            color: #6e6e73;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .trial-btn {
+            background: #5856d6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .trial-btn:hover {
+            background: #4745b8;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 600px;
+            margin: 80px auto;
+            padding: 0 24px;
+        }
+
+        .checker-card {
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+            color: #1d1d1f;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6e6e73;
+            font-size: 15px;
+            margin-bottom: 40px;
+        }
+
+        /* Upload Area */
+        .upload-wrapper {
+            margin-bottom: 32px;
+        }
+
+        .upload-area {
+            border: 2px dashed #d2d2d7;
+            border-radius: 12px;
+            padding: 60px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: #5856d6;
+            background: #f7f7ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #5856d6;
+            background: #f0f0ff;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 20px;
+            background: #e8e8ed;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #6e6e73;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            font-size: 13px;
+            color: #86868b;
+        }
+
+        .browse-link {
+            color: #5856d6;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 16px;
+            display: inline-block;
+        }
+
+        .browse-link:hover {
+            text-decoration: underline;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-selected {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: #f0f0ff;
+            border-radius: 8px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: #5856d6;
+            font-size: 14px;
+        }
+
+        .file-selected.show {
+            display: flex;
+        }
+
+        /* Rules Input */
+        .rules-section {
+    
+            margin-bottom: 32px;
+        }
+
+        .rule-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .rule-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .rule-input:focus {
+            outline: none;
+            border-color: #5856d6;
+        }
+
+        .rule-input::placeholder {
+            color: #86868b;
+        }
+
+        /* Terms Checkbox */
+        .terms-wrapper {
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .terms-wrapper input[type="checkbox"] {
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .terms-text {
+            font-size: 13px;
+            color: #6e6e73;
+            line-height: 1.5;
+        }
+
+        .terms-text a {
+            color: #5856d6;
+            text-decoration: none;
+        }
+
+        .terms-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Submit Button */
+        .verify-btn {
+            width: 100%;
+            padding: 16px;
+            background: #a0a0a8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: not-allowed;
+            transition: background 0.3s;
+        }
+
+        .verify-btn.active {
+            background: #5856d6;
+            cursor: pointer;
+        }
+
+        .verify-btn.active:hover {
+            background: #4745b8;
+        }
+
+        .verify-btn:disabled {
+            background: #a0a0a8;
+            cursor: not-allowed;
+        }
+
+        /* Loading State */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f0f0f0;
+            border-top-color: #5856d6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 15px;
+            color: #1d1d1f;
+            font-weight: 500;
+        }
+
+        /* Error Message */
+        .error-message {
+            display: none;
+            padding: 12px 16px;
+            background: #fff0f0;
+            border: 1px solid #ffcdd2;
+            border-radius: 8px;
+            color: #d32f2f;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .rules-section{
+            margin-top: 80px;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .checker-card {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#">Calculator</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+             
+                <a href="#" class="login-btn">Login</a>
+                <button class="trial-btn">Start Free Trial</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="checker-card">
+            <h1>NiyamrAI-PDF Analyzer</h1>
+            <p class="subtitle">Upload your PDF or Image to check its authenticity</p>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <form id="checkerForm">
+                <!-- Upload Area -->
+                <div class="upload-wrapper">
+                    <label for="fileInput" class="upload-area" id="uploadArea">
+                        <div class="upload-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                            </svg>
+                        </div>
+                        <div class="upload-text">Drag and drop your file here</div>
+                        <div class="upload-subtext">Supports PDF only(up to 5 MB)</div>
+                        <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg" required>
+                    </label>
+                    <a href="#" class="browse-link" id="browseLink">or click here to browse files</a>
+                    <div class="file-selected" id="fileSelected">
+                        <span>📎</span>
+                        <span id="fileName"></span>
+                    </div>
+                </div>
+
+                <!-- Rules Section -->
+                <div class="rules-section">
+                    <label class="rule-label">Rule 1</label>
+                    <input type="text" class="rule-input" name="rule1" placeholder="The document must mention at least one date" required>
+
+                    <label class="rule-label">Rule 2</label>
+                    <input type="text" class="rule-input" name="rule2" placeholder="The document must have a purpose section" required>
+
+                    <label class="rule-label">Rule 3</label>
+                    <input type="text" class="rule-input" name="rule3" placeholder="The document must define at least one term" required>
+                </div>
+
+                <!-- Terms -->
+                <div class="terms-wrapper">
+                    <input type="checkbox" id="termsCheckbox" required>
+                    <label for="termsCheckbox" class="terms-text">
+                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="verify-btn" id="verifyBtn" disabled>Verify Document</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">Analyzing document...</div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const browseLink = document.getElementById('browseLink');
+        const fileSelected = document.getElementById('fileSelected');
+        const fileName = document.getElementById('fileName');
+        const termsCheckbox = document.getElementById('termsCheckbox');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const checkerForm = document.getElementById('checkerForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Browse link click
+        browseLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            fileInput.click();
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                fileInput.files = e.dataTransfer.files;
+                handleFile(file);
+            }
+        });
+
+        function handleFile(file) {
+            // Check file size (25MB)
+            if (file.size > 25 * 1024 * 1024) {
+                showError('File size exceeds 25MB limit');
+                return;
+            }
+
+            fileName.textContent = file.name;
+            fileSelected.classList.add('show');
+            checkFormValidity();
+        }
+
+        // Check form validity
+        function checkFormValidity() {
+            const rule1 = document.querySelector('input[name="rule1"]').value.trim();
+            const rule2 = document.querySelector('input[name="rule2"]').value.trim();
+            const rule3 = document.querySelector('input[name="rule3"]').value.trim();
+            const hasFile = fileInput.files.length > 0;
+            const termsChecked = termsCheckbox.checked;
+
+            if (hasFile && rule1 && rule2 && rule3 && termsChecked) {
+                verifyBtn.disabled = false;
+                verifyBtn.classList.add('active');
+            } else {
+                verifyBtn.disabled = true;
+                verifyBtn.classList.remove('active');
+            }
+        }
+
+        // Listen to form changes
+        document.querySelectorAll('.rule-input').forEach(input => {
+            input.addEventListener('input', checkFormValidity);
+        });
+
+        termsCheckbox.addEventListener('change', checkFormValidity);
+
+        // Form submission
+        checkerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('pdf', fileInput.files[0]);
+            formData.append('rule1', document.querySelector('input[name="rule1"]').value);
+            formData.append('rule2', document.querySelector('input[name="rule2"]').value);
+            formData.append('rule3', document.querySelector('input[name="rule3"]').value);
+
+            try {
+                loadingOverlay.classList.add('show');
+                errorMessage.classList.remove('show');
+
+                const response = await fetch('/api/check/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.details || data.error || 'Analysis failed');
+                }
+
+                // Store results and redirect
+                sessionStorage.setItem('analysisResults', JSON.stringify(data));
+                window.location.href = '/results';
+
+            } catch (error) {
+                showError(error.message);
+                loadingOverlay.classList.remove('show');
+            }
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
