@@ -38,8 +38,8 @@ Users upload a PDF and enter 3 custom rules.
 - Analyze button
 - Clean, minimal EJS UI
 
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/2389b8d5-0b21-4267-85b7-829b9b0ca980" />
 
-![alt text](image.png)
 
 ---
 
@@ -53,7 +53,8 @@ Displays rule evaluation results with pass/fail status.
 - Confidence scores
 - File summary
 
-![alt text](image-1.png)
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/f5797ebc-a6af-40f4-ad72-34e33c7ba082" />
+
 
 
 
