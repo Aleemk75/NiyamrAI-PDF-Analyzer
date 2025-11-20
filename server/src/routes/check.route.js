@@ -58,7 +58,7 @@ router.post('/analyze', upload.single('pdf'), async (req, res) => {
             overallStatus
         };
         console.log('Sending response with', results.length, 'results');
-        res.json(response);
+        res.status(200).json(response);
 
     } catch (error) {
         console.error('Error:', error);
