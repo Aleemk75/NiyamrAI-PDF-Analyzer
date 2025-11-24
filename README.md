@@ -136,12 +136,6 @@ The app will start at 👉 **http://localhost:3000**
 
 ---
 
-## 📄 License
-
-ISC
-
----
-
 ## ⭐ Support
 
 If you like this project, don't forget to star the repo and share it with others!
